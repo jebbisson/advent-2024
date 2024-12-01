@@ -24,6 +24,7 @@ func main() {
 
 	left := []int{}
 	right := []int{}
+	mapSimularityRight := map[int]int{}
 
 	for scanner.Scan() {
 		text := scanner.Text()
@@ -46,6 +47,14 @@ func main() {
 
 		left = append(left, intLeft)
 		right = append(right, intRight)
+
+		//create map counter
+		val, ok := mapSimularityRight[intRight]
+		if ok {
+			mapSimularityRight[intRight] = val + 1
+		} else {
+			mapSimularityRight[intRight] = 1
+		}
 	}
 
 	log.Printf("total Left: %v,Right: %v", len(left), len(right))
@@ -58,6 +67,7 @@ func main() {
 	}
 
 	total := 0
+	totalSim := 0
 
 	for ind, valLeft := range left {
 		valRight := right[ind]
@@ -67,10 +77,21 @@ func main() {
 			diff = -diff
 		}
 
+		total += diff
+
 		log.Printf("L: %v R: %v D: %v", valLeft, valRight, diff)
 
-		total += diff
+		simScore, found := mapSimularityRight[valLeft]
+		if found {
+			totalSim += valLeft * simScore
+			log.Printf("L: %v R: %v simScore: %v", valLeft, valRight, simScore)
+		} else {
+			log.Printf("L: %v R: %v Not found", valLeft, valRight)
+		}
+
 	}
 
 	log.Printf("Total Difference: %v", total)
+
+	log.Printf("Total Simularity: %v", totalSim)
 }
