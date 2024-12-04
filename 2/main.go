@@ -30,7 +30,9 @@ func main() {
 		log.Printf("Numbers: %v", text)
 
 		previousVal := -1
+		prePreviousVal := -1
 		direction := 0
+		ignoreCount := 0
 		safe := true
 		for _, val := range numbers {
 			valNum, err := strconv.Atoi(val)
@@ -48,32 +50,44 @@ func main() {
 				} else if previousVal > valNum {
 					direction = -1
 				} else {
-					safe = false
 					log.Print("No direction determined, break")
-					break
+					if ignoreCount > 0 {
+						safe = false
+						break
+					}
+					ignoreCount += 1
 				}
 				log.Printf("D: %v", direction)
 			}
 
 			diff := valNum - previousVal
 			dirDiff := diff * direction
-			log.Printf("Diff: %v", dirDiff)
+			//log.Printf("Diff: %v", dirDiff)
 			if diff == 0 {
-				safe = false
 				log.Printf("Diff No change: %v", dirDiff)
-				break
+				if ignoreCount > 0 {
+					safe = false
+					break
+				}
+				ignoreCount += 1
 			} else if dirDiff < 0 {
-				safe = false
 				log.Printf("Diff Unsafe Wrong direction: %v", dirDiff)
-				break
+				if ignoreCount > 0 {
+					safe = false
+					break
+				}
+				ignoreCount += 1
 			} else if dirDiff > 3 {
-				safe = false
 				log.Printf("Diff Unsafe: %v", dirDiff)
-				break
+				if ignoreCount > 0 {
+					safe = false
+					break
+				}
+				ignoreCount += 1
+			} else {
+				//only change the previous val if no failure
+				previousVal = valNum
 			}
-
-			previousVal = valNum
-			//continue
 		}
 
 		if safe {
@@ -83,4 +97,5 @@ func main() {
 			log.Print("Unsafe run detected!")
 		}
 	}
+	log.Printf("Safe runs detected: %v", successCount)
 }
