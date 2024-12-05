@@ -31,11 +31,11 @@ func main() {
 	}
 
 	height, width := len(textGrid), len(textGrid[0])
-	word := "XMAS"
-	wordLength := 4
+	word := "MAS"
+	//wordLength := len(word)
 	found := 0
 
-	for row, rval := range textGrid {
+	/*	for row, rval := range textGrid {
 		for col, cval := range rval {
 			log.Printf("row: %v col: %v", row, col)
 			tests := []string{}
@@ -103,7 +103,49 @@ func main() {
 			found += searchWord(tests, word)
 			log.Printf("found so far: %v", found)
 		}
+	}*/
+
+	for row, rval := range textGrid {
+		if row == 0 || row == height-1 {
+			continue
+		}
+		for col, cval := range rval {
+			if col == 0 || col == width-1 {
+				continue
+			}
+			log.Printf("row: %v col: %v", row, col)
+			tests := []string{}
+			tests2 := []string{}
+
+			if cval == "A" {
+				test := textGrid[row-1][col-1]
+				test += cval
+				test += textGrid[row+1][col+1]
+				tests = append(tests, test)
+				test = textGrid[row+1][col+1]
+				test += cval
+				test += textGrid[row-1][col-1]
+				tests = append(tests, test)
+				if searchWord(tests, word) > 0 {
+					test := textGrid[row-1][col+1]
+					test += cval
+					test += textGrid[row+1][col-1]
+					tests2 = append(tests2, test)
+					test = textGrid[row+1][col-1]
+					test += cval
+					test += textGrid[row-1][col+1]
+					tests2 = append(tests2, test)
+					if searchWord(tests2, word) > 0 {
+						found += 1
+					}
+				}
+			}
+
+			log.Printf("found so far: %v", found)
+		}
 	}
+
+	//hardy har har, throw it all out and try again for part B
 
 	fmt.Printf("Found: %v", found)
 	//2657
