@@ -86,7 +86,7 @@ func main() {
 	successGrid := [][]int{}
 
 	for _, line := range numGrid {
-		success := true
+		success := false //flip our assumption to get the opposite
 		length := len(line)
 		for i, num := range line {
 			if i+1 == length {
@@ -95,7 +95,7 @@ func main() {
 			//!!!need to fix boundary limit issues!!!
 			test := ruleList[line[i+1]][num]
 			if test { // if we find an opposing rule then we are done
-				success = false
+				success = true
 				break
 			}
 		}
@@ -107,6 +107,24 @@ func main() {
 
 	total := 0
 	for _, val := range successGrid {
+		length := len(val)
+		fixed := false
+		//fancy fixing logic
+		for !fixed { //while not fixed
+			fixed = true
+			for i, num := range val {
+				if i+1 == length {
+					continue
+				}
+				_, ok := ruleList[val[i+1]][num]
+				if ok { //if the reverse is a rule then reverse it
+					val[i] = val[i+1]
+					val[i+1] = num
+					fixed = false //lets be sure to another pass
+				}
+			}
+		}
+
 		//mid := val[math.Floor(len(val)/2)]
 		mid := len(val) / 2
 		log.Printf("Success line: %v, mid: %v", val, val[mid])
