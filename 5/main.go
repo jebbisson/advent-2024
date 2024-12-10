@@ -43,7 +43,12 @@ func main() {
 			log.Fatal(err)
 		}
 
-		ruleList[numleft][numright] = true
+		rule, ok := ruleList[numleft]
+		if ok {
+			rule[numright] = true
+		} else {
+			ruleList[numleft] = map[int]bool{numright: true}
+		}
 	}
 
 	file2, err2 := os.Open("pages.txt")
@@ -82,8 +87,11 @@ func main() {
 
 	for _, line := range numGrid {
 		success := true
+		length := len(line)
 		for i, num := range line {
-
+			if i+1 == length {
+				break
+			}
 			//!!!need to fix boundary limit issues!!!
 			test := ruleList[line[i+1]][num]
 			if test { // if we find an opposing rule then we are done
@@ -97,7 +105,13 @@ func main() {
 		}
 	}
 
+	total := 0
 	for _, val := range successGrid {
-		log.Printf("Success line: %v", val)
+		//mid := val[math.Floor(len(val)/2)]
+		mid := len(val) / 2
+		log.Printf("Success line: %v, mid: %v", val, val[mid])
+		total += val[mid]
 	}
+
+	log.Printf("Total mid %v", total)
 }
